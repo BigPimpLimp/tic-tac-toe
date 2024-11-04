@@ -161,7 +161,16 @@ function gameController () {
    }
    createBoard();
 
-   const tileSelector = () => {
+   const getSquare = () => {
+      document.addEventListener('click', (e) => {
+         const target = e.target.closest('.grid-cell')
+         if (target) {
+
+         }
+      })
+   }
+
+   const inputPlayer = () => {
       
    }
 })();

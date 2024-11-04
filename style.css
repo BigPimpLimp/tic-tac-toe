@@ -1,18 +1,45 @@
 * {
     background-color: black;
+    font-size: 16px;
+}
+
+.header {
+    color: white;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+#main-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
 }
 
 #grid-container {
     display: grid;
+    grid-column: 2;
     grid-template-rows: repeat(3 1fr);
     grid-template-columns: repeat(3, minmax(150px, 200px)); 
     justify-content: center;
     gap: 1px;
-
 }
 
 .grid-cell {
     width: 200px;
     height: 200px;
     background-color: wheat;
+}
+
+.player {
+    color: white;
+    display: grid;
+    justify-content: center;
+}
+
+#player-one {
+    grid-column: 1;
+}
+
+#player-two {
+    grid-column: 3;
 }
