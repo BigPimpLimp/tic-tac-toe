@@ -5,6 +5,7 @@ function createPlayer (name) {
    const giveWin = () => record++;
    const giveLoss = () => record--;
    let char;
+
    return {name, getRecord, giveWin, giveLoss, char};
 }
 
@@ -24,7 +25,7 @@ function gameBoard () {
    return {board, getBoard, printBoard};
 };
 
-(function gameController () {
+function gameController () {
    const playerOne = createPlayer(prompt('Who is player 1?'));
    playerOne.char = prompt('x or o?');
    console.log(playerOne);
@@ -50,47 +51,77 @@ function gameBoard () {
       console.log(`${getActivePlayer().name}'s turn`);
    };
 
+   const printWinner = () => {
+      console.log(`${getActivePlayer().name} wins!!!`);
+   };
+
+   const printRecord = () => {
+      console.log(`${getActivePlayer().name} has ${getActivePlayer().getRecord()} win(s)!`)
+   }
+
 
    const winChecker = (arr) => {
       const threeX = (value) => value === 'x';
       const threeO = (value) => value === 'o';
+      let boardFull = 0;
 
-      for (i = 0; i < arr.length; i++) {
-         for (j = 0; j < arr[i].length; j++) {
+      for (x = 0; x < arr.length; x++) {
+         for (j = 0; j < arr[x].length; j++) {
             if (arr[0].every(threeX) || arr[0].every(threeO)) {
-               console.log(`${getActivePlayer().name} wins!!!`);
+               printWinner();
                getActivePlayer().giveWin();
-               console.log(`${getActivePlayer().name} has ${getActivePlayer().getRecord()} win(s)!`)
-               i = 10;
+               printRecord();
             };
             if (arr[1].every(threeX) || arr[1].every(threeO)) {
-               console.log(`${getActivePlayer().name} wins!!!`);
+               printWinner();
+               getActivePlayer().giveWin();
+               printRecord();
             };
             if (arr[2].every(threeX) || arr[2].every(threeO)) {
-               console.log(`${getActivePlayer().name} wins!!!`);
+               printWinner();
+               getActivePlayer().giveWin();
+               printRecord();
             };
             if (arr[0][0] === 'x' && arr[1][0] === 'x' && arr[2][0] === 'x' ||
                 arr[0][0] === 'o' && arr[1][0] === 'o' && arr[2][0] === 'o')  {
-                console.log(`${getActivePlayer().name} wins!!!`);
+               printWinner();
+               getActivePlayer().giveWin();
+               printRecord();
             };
             if (arr[0][1] === 'x' && arr[1][1] === 'x' && arr[2][1] === 'x' ||
                 arr[0][1] === 'o' && arr[1][1] === 'o' && arr[2][1] === 'o')  {
-                console.log(`${getActivePlayer().name} wins!!!`);
+               printWinner();
+               getActivePlayer().giveWin();
+               printRecord();
             };
             if (arr[0][2] === 'x' && arr[1][2] === 'x' && arr[2][2] === 'x' ||
                 arr[0][2] === 'o' && arr[1][2] === 'o' && arr[2][2] === 'o')  {
-                console.log(`${getActivePlayer().name} wins!!!`);
+               printWinner();
+               getActivePlayer().giveWin();
+               printRecord();
             };
             if (arr[0][0] === 'x' && arr[1][1] === 'x' && arr[2][2] === 'x' ||
                 arr[0][0] === 'o' && arr[1][1] === 'o' && arr[1][1] === 'o')  {
-                console.log(`${getActivePlayer().name} wins!!!`);
+               printWinner();
+               getActivePlayer().giveWin();
+               printRecord();
             };
             if (arr[0][2] === 'x' && arr[1][1] === 'x' && arr[2][0] === 'x' ||
                 arr[0][2] === 'o' && arr[1][1] === 'o' && arr[2][0] === 'o')  {
-                console.log(`${getActivePlayer().name} wins!!!`);
+               printWinner();
+               getActivePlayer().giveWin();
+               printRecord();
             };
-         }
-      }
+            if (arr[x][j] === 'x' || arr[x][j] === 'o') {
+               boardFull++;
+               console.log(boardFull);
+            };
+            if (boardFull === 8) {
+               console.log('It\'s a tie!');
+            };
+           
+         };
+      };
    };
 
    const playRound = () => {
@@ -104,12 +135,33 @@ function gameBoard () {
       winChecker(game.board);
       switchTurn();
       i++;
-   }
+   };
+
+
    };
 
    playRound();
 
-   return {switchTurn, getActivePlayer, printRound, playRound};
-})();
+   return {switchTurn, getActivePlayer, printTurn, playRound};
+};
 
-const test = gameController();
+(function displayController () {
+   const createBoard = () => {
+      const gridContainer = document.getElementById('grid-container');
+      const rows = 3;
+      const columns = 3;
+
+      for (i = 0; i < rows; i++) {
+         for (j = 0; j < columns; j++) {
+            const gridCell = document.createElement('div');
+            gridCell.classList.add('grid-cell');
+            gridContainer.appendChild(gridCell);
+         }
+      }
+   }
+   createBoard();
+
+   const tileSelector = () => {
+      
+   }
+})();

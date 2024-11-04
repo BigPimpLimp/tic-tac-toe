@@ -1,3 +1,18 @@
 * {
     background-color: black;
 }
+
+#grid-container {
+    display: grid;
+    grid-template-rows: repeat(3 1fr);
+    grid-template-columns: repeat(3, minmax(150px, 200px)); 
+    justify-content: center;
+    gap: 1px;
+
+}
+
+.grid-cell {
+    width: 200px;
+    height: 200px;
+    background-color: wheat;
+}
