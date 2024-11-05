@@ -25,18 +25,25 @@ function gameBoard () {
    return {board, getBoard, printBoard};
 };
 
-function gameController () {
-   const playerOne = createPlayer(prompt('Who is player 1?'));
-   playerOne.char = prompt('x or o?');
-   console.log(playerOne);
+(function gameController () {
 
+   const inputPlayer = (arr) => {
+      const playerOneName = document.getElementById('#player-one');
+      const playerTwoName = document.getElementById('#player-two');
+      playerOneName.innerHTML = arr[0].name;
+      playerTwoName.innerHTML = arr[1].name;
+   }
+
+   const playerOne = createPlayer(prompt('Who is player 1?'));
+   playerOne.char = 'x';
    const playerTwo = createPlayer(prompt('Who is player 2?'));
-   playerTwo.char = prompt('x or o?');
+   playerTwo.char = 'o';
    const game = gameBoard();
    const players = [
       playerOne,
       playerTwo
    ];
+   inputPlayer(players);
 
    let activePlayer = players[0];
 
@@ -140,10 +147,10 @@ function gameController () {
 
    };
 
-   playRound();
+   // playRound();
 
-   return {switchTurn, getActivePlayer, printTurn, playRound};
-};
+   return {switchTurn, getActivePlayer, printTurn, playRound, players};
+})();
 
 (function displayController () {
    const createBoard = () => {
@@ -170,7 +177,4 @@ function gameController () {
       })
    }
 
-   const inputPlayer = () => {
-      
-   }
 })();
