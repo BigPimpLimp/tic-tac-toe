@@ -25,26 +25,62 @@ function gameBoard () {
    return {board, getBoard, printBoard};
 };
 
-(function gameController () {
+function displayController () {
 
-   const inputPlayer = (arr) => {
-      const playerOneName = document.getElementById('#player-one');
-      const playerTwoName = document.getElementById('#player-two');
-      playerOneName.innerHTML = arr[0].name;
-      playerTwoName.innerHTML = arr[1].name;
+  
+
+   const createBoard = () => {
+      const gridContainer = document.getElementById('grid-container');
+      const rows = 3;
+      const columns = 3;
+
+      for (i = 0; i < rows; i++) {
+         for (j = 0; j < columns; j++) {
+            const gridCell = document.createElement('div');
+            gridCell.classList.add('grid-cell');
+            gridContainer.appendChild(gridCell);
+         }
+      }
+   }
+   createBoard();
+
+   const getSquare = () => {
+      console.log(getActivePlayer().char);
+      document.addEventListener('click', (e) => {
+         const target = e.target.closest('.grid-cell')
+         if (target) {
+            target.innerHTML = getActivePlayer().char;
+         }
+      })
    }
 
-   const playerOne = createPlayer(prompt('Who is player 1?'));
-   playerOne.char = 'x';
-   const playerTwo = createPlayer(prompt('Who is player 2?'));
-   playerTwo.char = 'o';
-   const game = gameBoard();
-   const players = [
-      playerOne,
-      playerTwo
-   ];
-   inputPlayer(players);
+   return {getSquare, createBoard};
+};
 
+(function gameController () {
+
+   const placer = displayController();
+
+   const inputPlayer = () => {
+      const playerOne = createPlayer(prompt('Who is player 1?'));
+      playerOne.char = 'x';
+      console.log(playerOne.name);
+      const playerTwo = createPlayer(prompt('Who is player 2?'));
+      playerTwo.char = 'o';
+      const players = [
+         playerOne,
+         playerTwo
+      ];
+      document.addEventListener('DOMContentLoaded', function() {
+         document.getElementById('player-one').innerHTML = playerOne.name;
+         document.getElementById('player-two').innerHTML = playerTwo.name;
+      });
+      return {players};
+   }
+   const { players } = inputPlayer();
+   
+   const game = gameBoard();
+    
    let activePlayer = players[0];
 
    const switchTurn = () => {
@@ -55,15 +91,15 @@ function gameBoard () {
    const getActivePlayer = () => activePlayer;
 
    const printTurn = () => {
-      console.log(`${getActivePlayer().name}'s turn`);
+      alert(`${getActivePlayer().name}'s turn`);
    };
 
    const printWinner = () => {
-      console.log(`${getActivePlayer().name} wins!!!`);
+      alert(`${getActivePlayer().name} wins!!!`);
    };
 
    const printRecord = () => {
-      console.log(`${getActivePlayer().name} has ${getActivePlayer().getRecord()} win(s)!`)
+      alert(`${getActivePlayer().name} has ${getActivePlayer().getRecord()} win(s)!`)
    }
 
 
@@ -134,10 +170,10 @@ function gameBoard () {
    const playRound = () => {
    let i = 0
    while (i < 9) {
-      printTurn();
-      let row = prompt('Enter row position');
-      let column = prompt('Enter column position');
-      game.board[row][column] = getActivePlayer().char;
+      // printTurn();
+
+      // game.board[row][column] = getActivePlayer().char;
+      placer.getSquare();
       game.printBoard();
       winChecker(game.board);
       switchTurn();
@@ -147,34 +183,9 @@ function gameBoard () {
 
    };
 
-   // playRound();
+   playRound();
 
    return {switchTurn, getActivePlayer, printTurn, playRound, players};
 })();
 
-(function displayController () {
-   const createBoard = () => {
-      const gridContainer = document.getElementById('grid-container');
-      const rows = 3;
-      const columns = 3;
-
-      for (i = 0; i < rows; i++) {
-         for (j = 0; j < columns; j++) {
-            const gridCell = document.createElement('div');
-            gridCell.classList.add('grid-cell');
-            gridContainer.appendChild(gridCell);
-         }
-      }
-   }
-   createBoard();
-
-   const getSquare = () => {
-      document.addEventListener('click', (e) => {
-         const target = e.target.closest('.grid-cell')
-         if (target) {
-
-         }
-      })
-   }
-
-})();
+const testing = gameController();
