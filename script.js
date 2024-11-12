@@ -25,41 +25,36 @@ function gameBoard () {
    return {board, getBoard, printBoard};
 };
 
-function displayController () {
-
-  
+(function displayController () {
 
    const createBoard = () => {
       const gridContainer = document.getElementById('grid-container');
       const rows = 3;
       const columns = 3;
+      let rowIndex = 0;
+      let columnIndex = 0;
 
       for (i = 0; i < rows; i++) {
          for (j = 0; j < columns; j++) {
             const gridCell = document.createElement('div');
             gridCell.classList.add('grid-cell');
+            gridCell.dataset.indexRow = rowIndex;
+            gridCell.dataset.indexColumn = columnIndex;
             gridContainer.appendChild(gridCell);
+            columnIndex++;
+            if (columnIndex === 3) {
+               columnIndex = 0;
+            };
          }
-      }
+         rowIndex++;
+      }  
    }
+
    createBoard();
 
-   const getSquare = () => {
-      console.log(getActivePlayer().char);
-      document.addEventListener('click', (e) => {
-         const target = e.target.closest('.grid-cell')
-         if (target) {
-            target.innerHTML = getActivePlayer().char;
-         }
-      })
-   }
-
-   return {getSquare, createBoard};
-};
+})();
 
 (function gameController () {
-
-   const placer = displayController();
 
    const inputPlayer = () => {
       const playerOne = createPlayer(prompt('Who is player 1?'));
@@ -90,102 +85,92 @@ function displayController () {
 
    const getActivePlayer = () => activePlayer;
 
-   const printTurn = () => {
+   const alertTurn = () => {
       alert(`${getActivePlayer().name}'s turn`);
    };
 
-   const printWinner = () => {
+   const alertWinner = () => {
       alert(`${getActivePlayer().name} wins!!!`);
    };
 
-   const printRecord = () => {
+   const alertRecord = () => {
       alert(`${getActivePlayer().name} has ${getActivePlayer().getRecord()} win(s)!`)
    }
 
+   const playRound = () => {
+      document.addEventListener('click', (e) => {
+         const target = e.target.closest('.grid-cell')
+         if (target) {
+            target.innerHTML = getActivePlayer().char;   
+            let columnIndex = target.getAttribute('data-index-column');
+            let rowIndex = target.getAttribute('data-index-row');
+            game.board[rowIndex][columnIndex] = getActivePlayer().char;
+            setTimeout(function() {
+               winChecker(game.board);
+               switchTurn();
+            }, 10);
+         }
+         
+      })
+   }
 
    const winChecker = (arr) => {
-      const threeX = (value) => value === 'x';
-      const threeO = (value) => value === 'o';
-      let boardFull = 0;
+      const checkWinner = (char) => {
+         for (let i = 0; i < 3; i++) {
+            if (arr[i].every(cell => cell === char)) return true;
+            if (arr.every(row => row[i] === char)) return true;
+         }
 
-      for (x = 0; x < arr.length; x++) {
-         for (j = 0; j < arr[x].length; j++) {
-            if (arr[0].every(threeX) || arr[0].every(threeO)) {
-               printWinner();
-               getActivePlayer().giveWin();
-               printRecord();
-            };
-            if (arr[1].every(threeX) || arr[1].every(threeO)) {
-               printWinner();
-               getActivePlayer().giveWin();
-               printRecord();
-            };
-            if (arr[2].every(threeX) || arr[2].every(threeO)) {
-               printWinner();
-               getActivePlayer().giveWin();
-               printRecord();
-            };
-            if (arr[0][0] === 'x' && arr[1][0] === 'x' && arr[2][0] === 'x' ||
-                arr[0][0] === 'o' && arr[1][0] === 'o' && arr[2][0] === 'o')  {
-               printWinner();
-               getActivePlayer().giveWin();
-               printRecord();
-            };
-            if (arr[0][1] === 'x' && arr[1][1] === 'x' && arr[2][1] === 'x' ||
-                arr[0][1] === 'o' && arr[1][1] === 'o' && arr[2][1] === 'o')  {
-               printWinner();
-               getActivePlayer().giveWin();
-               printRecord();
-            };
-            if (arr[0][2] === 'x' && arr[1][2] === 'x' && arr[2][2] === 'x' ||
-                arr[0][2] === 'o' && arr[1][2] === 'o' && arr[2][2] === 'o')  {
-               printWinner();
-               getActivePlayer().giveWin();
-               printRecord();
-            };
-            if (arr[0][0] === 'x' && arr[1][1] === 'x' && arr[2][2] === 'x' ||
-                arr[0][0] === 'o' && arr[1][1] === 'o' && arr[1][1] === 'o')  {
-               printWinner();
-               getActivePlayer().giveWin();
-               printRecord();
-            };
-            if (arr[0][2] === 'x' && arr[1][1] === 'x' && arr[2][0] === 'x' ||
-                arr[0][2] === 'o' && arr[1][1] === 'o' && arr[2][0] === 'o')  {
-               printWinner();
-               getActivePlayer().giveWin();
-               printRecord();
-            };
-            if (arr[x][j] === 'x' || arr[x][j] === 'o') {
-               boardFull++;
-               console.log(boardFull);
-            };
-            if (boardFull === 8) {
-               console.log('It\'s a tie!');
-            };
-           
+         if ((arr[0][2] === 'x' && arr[1][1] === 'x' && arr[2][0] === 'x') ||
+             (arr[0][2] === 'o' && arr[1][1] === 'o' && arr[2][0] === 'o'))  {
+             return true;
+         }
+
+         return false;
+      } 
+
+      if (checkWinner('x')) {
+         alertWinner();
+         getActivePlayer().giveWin();
+         alertRecord();
+         clearBoard(game.board);
+         return;
+      }
+
+      if (checkWinner('o')) {
+         alertWinner();
+         getActivePlayer().giveWin();
+         alertRecord();
+         clearBoard(game.board);
+         return;
+      }
+
+      const boardFull = arr.flat().filter(cell => cell === 'x' || cell === 'o').length === 9;
+      if (boardFull) {
+        alert('It\'s a tie!');
+      } 
+   };
+
+   const clearBoard = (arr) => {
+         document.querySelectorAll('.grid-cell').innerHTML = '';
+         for (let i = 0; i < 3; i++) {
+            arr[i].every(cell => cell = '');
          };
       };
-   };
 
-   const playRound = () => {
-   let i = 0
-   while (i < 9) {
-      // printTurn();
+   const btn = document.getElementById('clear-board');
+   btn.addEventListener('click', () => {
+      const board = document.querySelectorAll('.grid-cell');
+      board.innerHTML = '';
+      for (let i = 0; i < 3; i++) {
+         console.log('fuck me');
+         game.board[i].every(cell => cell = '');
+      };
+   });
+      
 
-      // game.board[row][column] = getActivePlayer().char;
-      placer.getSquare();
-      game.printBoard();
-      winChecker(game.board);
-      switchTurn();
-      i++;
-   };
-
-
-   };
-
+   
    playRound();
 
-   return {switchTurn, getActivePlayer, printTurn, playRound, players};
 })();
 
-const testing = gameController();
