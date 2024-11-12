@@ -153,19 +153,18 @@ function gameBoard () {
 
    const clearBoard = (arr) => {
          document.querySelectorAll('.grid-cell').innerHTML = '';
-         for (let i = 0; i < 3; i++) {
-            arr[i].every(cell => cell = '');
-         };
+            arr = arr.map(row => row.map(cell => ''));
       };
 
    const btn = document.getElementById('clear-board');
    btn.addEventListener('click', () => {
-      const board = document.querySelectorAll('.grid-cell');
-      board.innerHTML = '';
-      for (let i = 0; i < 3; i++) {
-         console.log('fuck me');
-         game.board[i].every(cell => cell = '');
-      };
+      const tiles = document.querySelectorAll('.grid-cell');
+      console.log(tiles);
+      tiles.forEach(tile => {
+         tile.innerHTML = '';
+      })
+      game.board = game.board.map(row => row.map(cell => ''));
+      console.log(game.board);
    });
       
 
