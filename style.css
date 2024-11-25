@@ -40,25 +40,14 @@
     justify-content: center;
 }
 
-#player-one, #x-button {
+#player-one, #x-button, #player-one-turn {
     grid-column: 1;
     grid-row:  1;
 }
 
-#player-two, #o-button {
+#player-two, #o-button, #player-two-turn {
     grid-column: 3;
     grid-row: 1;
-}
-
-.player-button {
-    display: grid;
-    justify-self: center;
-    border-radius: 5px;
-    background-color: wheat;
-    width: 50px;
-    height: 25px;
-    text-align: center;
-    margin: 25px;
 }
 
 #clear-board {
@@ -70,5 +59,12 @@
 .footer {
     display: flex;
     justify-content: center;
+    margin-top: 20px;
+}
+
+.player-turn {
+    color: white;
+    display: grid;
+    justify-self: center;
     margin-top: 20px;
 }

@@ -57,10 +57,10 @@ function gameBoard () {
 (function gameController () {
 
    const inputPlayer = () => {
-      const playerOne = createPlayer(prompt('Who is player 1?'));
+      const playerOne = createPlayer(prompt('Who is x?'));
       playerOne.char = 'x';
       console.log(playerOne.name);
-      const playerTwo = createPlayer(prompt('Who is player 2?'));
+      const playerTwo = createPlayer(prompt('Who is o?'));
       playerTwo.char = 'o';
       const players = [
          playerOne,
@@ -71,23 +71,34 @@ function gameBoard () {
          document.getElementById('player-two').innerHTML = playerTwo.name;
       });
       return {players};
-   }
+   };
+   
    const { players } = inputPlayer();
    
    const game = gameBoard();
     
    let activePlayer = players[0];
 
+   const getActivePlayer = () => activePlayer;
+
    const switchTurn = () => {
       activePlayer = activePlayer === 
       players[0] ? players[1] : players[0];
    };
 
-   const getActivePlayer = () => activePlayer;
+   const displayTurn = () => {
+      const player1 = document.getElementById('player-one-turn');
+      const player2 = document.getElementById('player-two-turn');
+      if (getActivePlayer() === players[0]) {
+         player1.innerHTML = 'Your turn!';
+         player2.innerHTML = '';
+      }
+      if (getActivePlayer() === players[1]) {
+         player2.innerHTML = 'Your turn!';
+         player1.innerHTML = '';
+      } 
 
-   const alertTurn = () => {
-      alert(`${getActivePlayer().name}'s turn`);
-   };
+   }
 
    const alertWinner = () => {
       alert(`${getActivePlayer().name} wins!!!`);
@@ -97,10 +108,16 @@ function gameBoard () {
       alert(`${getActivePlayer().name} has ${getActivePlayer().getRecord()} win(s)!`)
    }
 
+   displayTurn();
+   
    const playRound = () => {
       document.addEventListener('click', (e) => {
          const target = e.target.closest('.grid-cell')
          if (target) {
+            if (target.innerHTML === 'x' || target.innerHTML === 'o') {
+               alert('Can\'t do that bro!');
+               return;
+            }
             target.innerHTML = getActivePlayer().char;   
             let columnIndex = target.getAttribute('data-index-column');
             let rowIndex = target.getAttribute('data-index-row');
@@ -108,6 +125,7 @@ function gameBoard () {
             setTimeout(function() {
                winChecker(game.board);
                switchTurn();
+               displayTurn();
             }, 10);
          }
          
@@ -121,19 +139,16 @@ function gameBoard () {
             if (arr.every(row => row[i] === char)) return true;
          }
 
-         if ((arr[0][2] === 'x' && arr[1][1] === 'x' && arr[2][0] === 'x') ||
-             (arr[0][2] === 'o' && arr[1][1] === 'o' && arr[2][0] === 'o'))  {
-             return true;
-         }
+         if (arr[0][0] === char && arr[1][1] === char && arr[2][2] === char) return true;
+         if (arr[0][2] === char && arr[1][1] === char && arr[2][0] === char) return true;
 
-         return false;
       } 
 
       if (checkWinner('x')) {
          alertWinner();
          getActivePlayer().giveWin();
          alertRecord();
-         clearBoard(game.board);
+         clearBoard();
          return;
       }
 
@@ -141,36 +156,36 @@ function gameBoard () {
          alertWinner();
          getActivePlayer().giveWin();
          alertRecord();
-         clearBoard(game.board);
+         clearBoard();
          return;
       }
 
       const boardFull = arr.flat().filter(cell => cell === 'x' || cell === 'o').length === 9;
       if (boardFull) {
         alert('It\'s a tie!');
+        clearBoard();
       } 
    };
 
-   const clearBoard = (arr) => {
-         document.querySelectorAll('.grid-cell').innerHTML = '';
-         for (let i = 0; i < 3; i++) {
-            arr[i].every(cell => cell = '');
-         };
+   const clearBoard = () => {
+      game.board = game.board.map(row => row.map(cell => ''));
+      const tiles = document.querySelectorAll('.grid-cell');
+         tiles.forEach(tile => {
+            tile.innerHTML = '';
+         });            
       };
 
    const btn = document.getElementById('clear-board');
    btn.addEventListener('click', () => {
-      const board = document.querySelectorAll('.grid-cell');
-      board.innerHTML = '';
-      for (let i = 0; i < 3; i++) {
-         console.log('fuck me');
-         game.board[i].every(cell => cell = '');
-      };
+      game.board = game.board.map(row => row.map(cell => ''));
+      const tiles = document.querySelectorAll('.grid-cell');
+      tiles.forEach(tile => {
+         tile.innerHTML = '';
+      });
+      switchTurn();
+      displayTurn();
    });
-      
-
-   
+        
    playRound();
 
 })();
-
